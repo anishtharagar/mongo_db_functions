@@ -80,9 +80,7 @@ def mongo_collect_data(mongo_host,mongo_db_name,mongo_collection_name = []):
         doc_list = {}
         return_data = {}
         for i in range(len(mongo_collection_name)):
-            print len(mongo_collection_name)
             collection_name = mongo_collection_name.__getitem__(i)
-            print mongo_collection_name.__getitem__(i)
             mongo_collection_cursor = mongo_db_conn_cursor[collection_name]
             doc_list[i] = mongo_collection_cursor.find()
         k=0
