@@ -71,3 +71,37 @@ def mongo_delete_load(mongo_db_host_del,mongo_db_name_del,mongo_collection_name_
         print "System Error({0})", format(e.message)
     except:
         print "Unexpected error:", sys.exc_info()[0]
+
+
+def mongo_collect_data(mongo_host,mongo_db_name,mongo_collection_name = []):
+    try:
+        mongo_db_conn = pymongo.Connection(mongo_host)
+        mongo_db_conn_cursor = mongo_db_conn[mongo_db_name]
+        doc_list = {}
+        return_data = {}
+        for i in range(len(mongo_collection_name)):
+            print len(mongo_collection_name)
+            collection_name = mongo_collection_name.__getitem__(i)
+            print mongo_collection_name.__getitem__(i)
+            mongo_collection_cursor = mongo_db_conn_cursor[collection_name]
+            doc_list[i] = mongo_collection_cursor.find()
+        k=0
+        for j in range(len(doc_list)):
+             for document in doc_list[j]:
+                return_data[k] = document
+                print document
+                k=k+1
+
+        return return_data
+        mongo_db_conn.close()
+
+    except OSError as e:
+        print "OS Error({0}): {1}", format(e.errno, e.strerror)
+    except IOError as e:
+        print "I/O error({0}): {1}".format(e.errno, e.strerror)
+    except  ValueError:
+        print "Could not convert data to an integer."
+    except  SystemError as e:
+        print "System Error({0})", format(e.message)
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
