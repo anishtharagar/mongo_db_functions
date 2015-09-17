@@ -89,7 +89,6 @@ def mongo_collect_data(mongo_host,mongo_db_name,mongo_collection_name = []):
         for j in range(len(doc_list)):
              for document in doc_list[j]:
                 return_data[k] = document
-                print document
                 k=k+1
 
         return return_data
