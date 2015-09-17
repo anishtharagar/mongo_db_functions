@@ -82,7 +82,7 @@ def mongo_collect_data(mongo_host,mongo_db_name,mongo_collection_name = []):
         for i in range(len(mongo_collection_name)):
             collection_name = mongo_collection_name.__getitem__(i)
             mongo_collection_cursor = mongo_db_conn_cursor[collection_name]
-            doc_list[i] = mongo_collection_cursor.find({},{'_id: false'})
+            doc_list[i] = mongo_collection_cursor.find({}, {'_id': 0})
         k=0
         for j in range(len(doc_list)):
              for document in doc_list[j]:
