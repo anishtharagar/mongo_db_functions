@@ -209,3 +209,54 @@ def mongo_query_data(mongo_host,mongo_db_name,mongo_collection_name = [],query =
      except:
         print "Unexpected error:", sys.exc_info()[0]
 
+#### Function to delete the collection and load new data into the collection which was deleted.
+#argument list for the mongo_collect_data is given below
+#mongo_db_host --> hostname or ip on which the mongodb is hosted.
+#mongo_db_name --> database name on which the collection exists
+#mongo_collection_name --> collection which needs to be edited.
+#mongo_x_field_name --> this will be tag/key based on which the x_values will be collected.
+#mongo_y_field_name --> this will be tag/key based on which the x_values will be collected.
+
+def mongo_custom_collect_2d_graph_data(*args):
+    count_arg_length = len(args)
+    if count_arg_length.__str__() != '5':
+        print "List of arguments passed does not statisfy the function call requirement. kindly refer the help page. %.3d" % args.count()
+        sys.exit()
+
+    mongo_host = args.__getitem__(0).__str__()
+    mongo_db_name = args.__getitem__(1).__str__()
+    mongo_collection_name = args.__getitem__(2)
+    mongo_x_field_name = args.__getitem__(3).__str__()
+    mongo_y_field_name = args.__getitem__(4).__str__()
+    try:
+        mongo_db_conn = pymongo.Connection(mongo_host)
+        mongo_db_conn_cursor = mongo_db_conn[mongo_db_name]
+
+        doc_list = {}
+        return_data = {}
+        print mongo_x_field_name
+        print mongo_y_field_name
+        for i in range(len(mongo_collection_name)):
+            collection_name = mongo_collection_name.__getitem__(i)
+            mongo_collection_cursor = mongo_db_conn_cursor[collection_name]
+            doc_list.__setitem__(i, mongo_collection_cursor.find({}, {'_id': 0, str(mongo_x_field_name): 1, str(mongo_y_field_name): 1 }))
+
+        k=0
+        for j in range(len(doc_list)):
+             for document in doc_list[j]:
+                return_data[k] = document
+                k=k+1
+
+        return return_data
+        mongo_db_conn.close()
+
+    except OSError as e:
+        print "OS Error({0}): {1}", format(e.errno, e.strerror)
+    except IOError as e:
+        print "I/O error({0}): {1}".format(e.errno, e.strerror)
+    except  ValueError:
+        print "Could not convert data to an integer."
+    except  SystemError as e:
+        print "System Error({0})", format(e.message)
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
