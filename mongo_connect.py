@@ -226,8 +226,15 @@ def mongo_custom_collect_2d_graph_data(*args):
     mongo_host = args.__getitem__(0).__str__()
     mongo_db_name = args.__getitem__(1).__str__()
     mongo_collection_name = args.__getitem__(2)
-    mongo_x_field_name = args.__getitem__(3).__str__()
-    mongo_y_field_name = args.__getitem__(4).__str__()
+    mongo_x_field_name = args.__getitem__(3)
+    mongo_y_field_name = args.__getitem__(4)
+
+    count_x_field_length = len(mongo_x_field_name)
+    count_y_field_length = len(mongo_y_field_name)
+    if count_x_field_length.__int__() != count_y_field_length.__int__():
+        print "kindly provide same number of entries for x and y axis."
+        sys.exit()
+
     try:
         mongo_db_conn = pymongo.Connection(mongo_host)
         mongo_db_conn_cursor = mongo_db_conn[mongo_db_name]
@@ -236,10 +243,19 @@ def mongo_custom_collect_2d_graph_data(*args):
         return_data = {}
         print mongo_x_field_name
         print mongo_y_field_name
+        z = 0
         for i in range(len(mongo_collection_name)):
             collection_name = mongo_collection_name.__getitem__(i)
-            mongo_collection_cursor = mongo_db_conn_cursor[collection_name]
-            doc_list.__setitem__(i, mongo_collection_cursor.find({}, {'_id': 0, str(mongo_x_field_name): 1, str(mongo_y_field_name): 1 }))
+
+            for j in range(len(mongo_x_field_name)):
+                if str(mongo_x_field_name[j]) == str(mongo_y_field_name[j]):
+                    print "Kindly dont provide same fields for x and y axis"
+                    sys.exit()
+                mongo_collection_cursor = mongo_db_conn_cursor[collection_name]
+                print mongo_x_field_name[j]
+                print mongo_y_field_name[j]
+                doc_list.__setitem__(z, mongo_collection_cursor.find({}, {'_id': 0, mongo_x_field_name[j]: 1, mongo_y_field_name[j]: 1 }))
+                z = z+1
 
         k=0
         for j in range(len(doc_list)):
